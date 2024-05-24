@@ -27,7 +27,6 @@ public class UserController {
     //아이디 중복검사
     @PostMapping("/idDuplicateCheck")
     public ResponseEntity<Boolean> idDuplicateCheck(@RequestBody String userId) {
-        System.out.println("controller===============================");
         boolean result = userService.idDuplicateCheck(userId);
         return ResponseEntity.ok().body(result);
     }

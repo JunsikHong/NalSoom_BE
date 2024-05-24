@@ -24,14 +24,12 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-                System.out.println("filter======================");
         // 토큰 검증
         String token = jwtTokenProvider.resolveToken(request);
         if (token != null && jwtTokenProvider.isValidToken(token)) {
             String userId = jwtTokenProvider.getUserIdFromToken(token);
             UserDetailsImpl userDetailsImpl = new UserDetailsImpl(userId);
-            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetailsImpl,
-                    null, userDetailsImpl.getAuthorities());
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetailsImpl, null, userDetailsImpl.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
         filterChain.doFilter(request, response);
