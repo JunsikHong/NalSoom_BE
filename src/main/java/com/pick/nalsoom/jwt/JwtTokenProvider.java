@@ -17,19 +17,19 @@ import jakarta.servlet.http.HttpServletRequest;
 public class JwtTokenProvider {
 
     @Value("${custom.jwt.auth_header}")
-    public static String auth_header;
+    public String auth_header;
 
     @Value("${custom.jwt.token_type}")
-    public static String token_type;
+    public String token_type;
 
-    @Value("${custom.jwt-secret-key}")
-    private static String jwtSecretKey;
+    @Value("${custom.jwt.secret}")
+    private String jwtSecretKey;
 
     @Value("${custom.jwt.expiration_time}")
-    private static Long expirationTime;
+    private Long expirationTime;
 
     @Value("${custom.jwt.refresh_time}")
-    private static Long refreshTime;
+    private Long refreshTime;
 
     // jwt 발급
     public JwtToken createJwtToken(UserDetailsImpl userDetailsImpl) {

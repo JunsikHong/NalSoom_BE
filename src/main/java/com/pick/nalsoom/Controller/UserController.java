@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.pick.nalsoom.Dto.User.UserDto;
 import com.pick.nalsoom.Service.User.UserService;
+import com.pick.nalsoom.jwt.JwtToken;
 
 
 @RestController
@@ -48,11 +49,9 @@ public class UserController {
     
     //로그인
     @PostMapping("/login")
-    public Boolean login(@RequestBody UserDto userDto) {
-        
-        
-        return true;
+    public ResponseEntity<JwtToken> login(@RequestBody UserDto userDto) {
+        JwtToken token = userService.login(userDto);
+        return ResponseEntity.ok(token);
     }
-    
     
 }
