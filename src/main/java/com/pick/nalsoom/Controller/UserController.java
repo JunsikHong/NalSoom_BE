@@ -23,7 +23,7 @@ public class UserController {
 
     @GetMapping("/test")
     public String getMethodName(@RequestHeader HttpHeaders httpHeaders) {
-        
+        System.out.println("ddsfds");
         System.out.println(httpHeaders + "================");
         return "서버";
     }
