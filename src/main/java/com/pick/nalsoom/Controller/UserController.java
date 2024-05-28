@@ -1,17 +1,18 @@
 package com.pick.nalsoom.Controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.pick.nalsoom.Dto.User.UserDto;
 import com.pick.nalsoom.Service.User.UserService;
 import com.pick.nalsoom.jwt.JwtToken;
-
 
 @RestController
 @RequestMapping("/api/v1/user")
@@ -21,7 +22,9 @@ public class UserController {
     private UserService userService;
 
     @GetMapping("/test")
-    public String getMethodName() {
+    public String getMethodName(@RequestHeader HttpHeaders httpHeaders) {
+        
+        System.out.println(httpHeaders + "================");
         return "서버";
     }
     
