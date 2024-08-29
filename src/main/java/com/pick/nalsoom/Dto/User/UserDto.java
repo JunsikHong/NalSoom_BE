@@ -16,14 +16,14 @@ public class UserDto {
     private Long userProperNum;
     private String userId;
     private String userPw;
-    private String email;
+    private String userEmail;
 
     public User toEntity() {
         return User.builder()
                 .userProperNum(userProperNum)
                 .userId(userId)
                 .userPw(userPw)
-                .email(email)
+                .userEmail(userEmail)
                 .build();
     }
 }

@@ -32,15 +32,15 @@ public class User {
     @Column(name = "USER_PW")
     private String userPw;
 
-    @Column(name = "EMAIL")
-    private String email;
+    @Column(name = "USER_EMAIL")
+    private String userEmail;
 
     public UserDto toDto() {
         return UserDto.builder()
                 .userProperNum(userProperNum)
                 .userId(userId)
                 .userPw(userPw)
-                .email(email)
+                .userEmail(userEmail)
                 .build();
     }
 }
