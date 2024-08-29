@@ -15,7 +15,7 @@ public class FavoritesDto {
 
     private Long favoritesProperNum;
     private String favoritesLocation;
-    private String userProperNum;
+    private Long userProperNum;
 
     public Favorites toEntity() {
         return Favorites.builder()

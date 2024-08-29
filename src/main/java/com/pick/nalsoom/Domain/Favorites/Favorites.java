@@ -30,7 +30,7 @@ public class Favorites {
     private String favoritesLocation;
 
     @Column(name = "USER_PROPER_NUM")
-    private String userProperNum;
+    private Long userProperNum;
 
     public FavoritesDto toDto() {
         return FavoritesDto.builder()

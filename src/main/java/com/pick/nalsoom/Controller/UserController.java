@@ -1,12 +1,9 @@
 package com.pick.nalsoom.Controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,26 +17,23 @@ public class UserController {
     
     @Autowired
     private UserService userService;
-
-    @GetMapping("/test")
-    public String getMethodName(@RequestHeader HttpHeaders httpHeaders) {
-        System.out.println("ddsfds");
-        System.out.println(httpHeaders + "================");
-        return "서버";
-    }
     
     //아이디 중복검사
     @PostMapping("/idDuplicateCheck")
-    public ResponseEntity<Boolean> idDuplicateCheck(@RequestBody String userId) {
-        boolean result = userService.idDuplicateCheck(userId);
+    public ResponseEntity<Boolean> idDuplicateCheck(@RequestBody UserDto userDto) {
+        boolean result = userService.idDuplicateCheck(userDto.getUserId());
         return ResponseEntity.ok().body(result);
     }
 
     //이메일 발송
-    @PostMapping("/emailCheck")
-    public Boolean emailCheck(@RequestBody String email) {
-        System.out.println(email);
-        
+    @PostMapping("/sendEmail")
+    public Boolean sendEmail(@RequestBody UserDto userDto) {
+        return true;
+    }
+
+    //이메일 인증번호검사
+    @PostMapping("/checkEmail")
+    public Boolean checkEmail(@RequestBody String entity) {
         return true;
     }
     

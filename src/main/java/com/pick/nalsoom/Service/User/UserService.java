@@ -25,22 +25,22 @@ public class UserService {
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
+    // 아이디 중복검사
+    public Boolean idDuplicateCheck(String userId) {
+        Optional<User> result = userRepository.findByUserId(userId);
+        if (result.isEmpty()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
     // 회원가입
     public Boolean join(UserDto userDto) {
         String encodedPassword = passwordEncoder.encode(userDto.getUserPw());
         userDto.setUserPw(encodedPassword);
         User result = userRepository.save(userDto.toEntity());
         if (result != null) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    // 아이디 중복검사
-    public Boolean idDuplicateCheck(String userId) {
-        Optional<User> result = userRepository.findByUserId(userId);
-        if (result.isEmpty()) {
             return true;
         } else {
             return false;
