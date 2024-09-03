@@ -3,6 +3,7 @@ package com.pick.nalsoom.Service.User;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +25,9 @@ public class UserService {
 
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
+
+    @Value("${custom.jwt.secret}")
+    private String jwtSecretKey;
 
     // 아이디 중복검사
     public Boolean idDuplicateCheck(String userId) {
@@ -57,5 +61,11 @@ public class UserService {
             }
         }
         return null;
+    }
+
+    //ID로 userProperNum 검색
+    public Long getUserProperNum(String userId) {
+        Optional<User> user = userRepository.findByUserId(userId);
+        return user.get().getUserProperNum();
     }
 }

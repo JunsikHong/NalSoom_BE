@@ -40,8 +40,7 @@ public class SecurityConfig {
         .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 인증                                                                                               // 해제
 
         .authorizeHttpRequests((authorize) -> authorize
-            .requestMatchers("/api/v1/click/**").authenticated() // click 요청은 인증된 사용자만
-            .requestMatchers("/api/v1/favorites/**").authenticated() // favorites 요청은 인증된 사용자만
+            .requestMatchers("/api/v1/good/**").authenticated() // good 요청은 인증된 사용자만
             .anyRequest().permitAll())
 
         .addFilterBefore(new JwtAuthorizationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);

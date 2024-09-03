@@ -2,6 +2,7 @@ package com.pick.nalsoom.Service.Shelter;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -158,4 +159,8 @@ public class ShelterService {
         shelterRepository.saveAll(finedustShelterList);
     }
 
+    // 게시판 정보
+    public List<Shelter> getBoardData() {
+        return shelterRepository.findTop10ByOrderByShelterProperNumAsc();
+    }
 }
