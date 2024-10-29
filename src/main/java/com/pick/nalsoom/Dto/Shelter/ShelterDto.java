@@ -14,23 +14,14 @@ import lombok.NoArgsConstructor;
 public class ShelterDto {
 
     private Long shelterProperNum;
-    private String shelterType;
-    private String areaCD;
-    private Long goodCount;
-    private Long reviewCount;
-    private String reveiwContent;
-    private String recentWriteTime;
+    private String ShelterType;
+    private String ShelterSn;
 
     public Shelter toEntity() {
         return Shelter.builder()
                 .shelterProperNum(shelterProperNum)
-                .shelterType(shelterType)
-                .areaCD(areaCD)
-                .goodCount(goodCount)
-                .reviewCount(reviewCount)
-                .reviewContent(reveiwContent)
-                .recentWriteTime(recentWriteTime)
+                .shelterType(ShelterType)
+                .shelterSn(ShelterSn)
                 .build();
     }
-
 }
