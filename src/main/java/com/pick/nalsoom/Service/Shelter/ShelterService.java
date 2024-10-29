@@ -1,26 +1,28 @@
 package com.pick.nalsoom.Service.Shelter;
 
+import com.pick.nalsoom.Domain.Shelter.Shelter;
+import com.pick.nalsoom.Dto.Shelter.CoolingCentre.CoolingCentreDto;
+import com.pick.nalsoom.Dto.Shelter.CoolingCentre.RowDto;
+import com.pick.nalsoom.Dto.Shelter.FinedustShelter.ShuntPlaceDto;
+import com.pick.nalsoom.Dto.Shelter.HeatingCentre.TbGtnCwPDto;
+import com.pick.nalsoom.Repository.Shelter.ShelterRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
+
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-
-import com.pick.nalsoom.Domain.Shelter.Shelter;
-import com.pick.nalsoom.Dto.Shelter.ShelterDto;
-import com.pick.nalsoom.Repository.Shelter.ShelterRepository;
-
 @Service("shelterService")
 public class ShelterService {
+
+    @Value("${seoul-data-key}")
+    private String seoulDataKey;
 
     @Autowired
     private RestTemplate restTemplate;
@@ -28,139 +30,294 @@ public class ShelterService {
     @Autowired
     private ShelterRepository shelterRepository;
 
-    @Value("${seoul-data-key}")
-    private String seoulDataKey;
+    //seoul api 의 shelter api 는 매 월 말일에 업데이트 됨 -> 매 월 1일에 Shelter data 업데이트
+    @Scheduled(cron = "0 0 0 1 * ? *")
+    public void updateSheltersData () {
 
-    // 한파쉼터 데이터 얻기
-    public void getHeatingCentreData() {
-        ArrayList<Shelter> heatingCentreList = new ArrayList<>();
+        //api response result
+        List<com.pick.nalsoom.Dto.Shelter.CoolingCentre.RowDto> coolingCentreData = null;
+        List<com.pick.nalsoom.Dto.Shelter.HeatingCentre.RowDto> heatingCentreData = null;
+        List<com.pick.nalsoom.Dto.Shelter.FinedustShelter.RowDto> fineDustShelterData = null;
 
-        for (int num = 0; num < 3; num++) {
-            int pageStartNum = 1;
-            int pageEndNum = 1000;
-            URI url = URI.create("http://openapi.seoul.go.kr:8088/" + seoulDataKey + "/JSON/TbGtnHwcwP/" + pageStartNum + "/" + pageEndNum + "/");
-            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, null, String.class);
+        //api request & response
+        coolingCentreData = requestCoolingCentreAPI();
+        heatingCentreData = requestHeatingCentreAPI();
+        fineDustShelterData = requestFineDustShelterAPI();
 
-            try {
-                JSONParser jsonParser = new JSONParser();
+        //response dto -> shelter domain list
+        List<Shelter> shelterList = new ArrayList<>();
 
-                // response -> TbGtnHwcwP
-                JSONObject responseParse = (JSONObject) jsonParser.parse(response.getBody().toString());
-                JSONObject TbGtnHwcwP = (JSONObject) responseParse.get("TbGtnHwcwP");
+        coolingCentreData.stream().map(coolingCentre -> {
+            shelterList.add(Shelter.builder()
+                    .shelterSn(coolingCentre.getRSeqNo())
+                    .shelterType("TbGtnHwcwP")
+                    .build());
+            return true;
+        });
 
-                // TbGtnHwcwP -> row
-                JSONObject TbGtnHwcwPParse = (JSONObject) jsonParser.parse(TbGtnHwcwP.toString());
-                JSONArray row = (JSONArray) TbGtnHwcwPParse.get("row");
+        heatingCentreData.stream().map(heatingCentre -> {
+            shelterList.add(Shelter.builder()
+                    .shelterSn(heatingCentre.getRSeqNo())
+                    .shelterType("TbGtnCwP")
+                    .build());
+            return true;
+        });
 
-                // row -> rowList
-                JSONArray rowList = (JSONArray) jsonParser.parse(row.toString());
+        fineDustShelterData.stream().map(fineDustShelter -> {
+            shelterList.add(Shelter.builder()
+                    .shelterSn(fineDustShelter.getSn())
+                    .shelterType("shuntPlace")
+                    .build());
+            return true;
+        });
 
-                // rowList -> rowParse -> rowData -> AREA_CDList
-                for (int i = 0; i < rowList.size(); i++) {
-                    JSONObject rowParse = (JSONObject) rowList.get(i);
-                    JSONObject rowData = (JSONObject) jsonParser.parse(rowParse.toString());
-                    ShelterDto shelterDto = new ShelterDto();
-                    shelterDto.setShelterType("heatingCentre");
-                    shelterDto.setAreaCD(rowData.get("AREA_CD").toString());
-                    heatingCentreList.add(shelterDto.toEntity());
-                }
+        //shelter repository truncate
+        shelterRepository.deleteAll();
 
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-            pageStartNum += 1000;
-            pageEndNum += 1000;
-        }
+        //shelter domain -in-> shelter repository
+        shelterRepository.saveAll(shelterList);
 
-        shelterRepository.saveAll(heatingCentreList);
     }
 
-    // 무더위쉼터 데이터 얻기
-    public void getCoolingCentreData() {
-        ArrayList<Shelter> coolingCentreList = new ArrayList<>();
+    //cooling centre api request & response
+    public List<com.pick.nalsoom.Dto.Shelter.CoolingCentre.RowDto> requestCoolingCentreAPI () {
 
-        for (int num = 0; num < 3; num++) {
-            int pageStartNum = 1;
-            int pageEndNum = 1000;
-            URI url = URI.create("http://openapi.seoul.go.kr:8088/" + seoulDataKey + "/JSON/TbGtnCwP/" + pageStartNum + "/" + pageEndNum + "/");
-            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, null, String.class);
+        //api response result
+        List<com.pick.nalsoom.Dto.Shelter.CoolingCentre.RowDto> coolingCentreData = new ArrayList<>();
 
-            try {
-                JSONParser jsonParser = new JSONParser();
-
-                // response -> TbGtnHwcwP
-                JSONObject responseParse = (JSONObject) jsonParser.parse(response.getBody().toString());
-                JSONObject TbGtnCwP = (JSONObject) responseParse.get("TbGtnCwP");
-
-                // TbGtnHwcwP -> row
-                JSONObject TbGtnCwPParse = (JSONObject) jsonParser.parse(TbGtnCwP.toString());
-                JSONArray row = (JSONArray) TbGtnCwPParse.get("row");
-
-                // row -> rowList
-                JSONArray rowList = (JSONArray) jsonParser.parse(row.toString());
-
-                // rowList -> rowParse -> rowData -> AREA_CDList
-                for (int i = 0; i < rowList.size(); i++) {
-                    JSONObject rowParse = (JSONObject) rowList.get(i);
-                    JSONObject rowData = (JSONObject) jsonParser.parse(rowParse.toString());
-                    ShelterDto shelterDto = new ShelterDto();
-                    shelterDto.setShelterType("coolingCentre");
-                    shelterDto.setAreaCD(rowData.get("AREA_CD").toString());
-                    coolingCentreList.add(shelterDto.toEntity());
-                }
-
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-            pageStartNum += 1000;
-            pageEndNum += 1000;
-        }
-
-        shelterRepository.saveAll(coolingCentreList);
-    }
-
-    // 미세먼지쉼터 데이터 얻기
-    public void getFinedustShelterData() {
-        ArrayList<Shelter> finedustShelterList = new ArrayList<>();
-
+        //api request condition
+        restTemplate = new RestTemplate();
+        String baseUrl = "http://openapi.seoul.go.kr:8088/";
         int pageStartNum = 1;
-        int pageEndNum = 155;
-        URI url = URI.create("http://openapi.seoul.go.kr:8088/" + seoulDataKey + "/JSON/shuntPlace/" + pageStartNum + "/" + pageEndNum + "/");
-        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, null, String.class);
+        int pageEndNum = 1000;
+        int listEndNum = 0;
 
-        try {
-            JSONParser jsonParser = new JSONParser();
+        //temp api request uri
+        URI tempUri = UriComponentsBuilder
+                .fromUriString(baseUrl)
+                .path(seoulDataKey + "/" + "JSON" + "/" + "TbGtnHwcwP" + "/" + 1 + "/" + 1 + "/")
+                .encode()
+                .build()
+                .toUri();
 
-            // response -> TbGtnHwcwP
-            JSONObject responseParse = (JSONObject) jsonParser.parse(response.getBody().toString());
-            JSONObject shuntPlace = (JSONObject) responseParse.get("shuntPlace");
+        //temp api response
+        ResponseEntity<CoolingCentreDto> tempApiResult = restTemplate.getForEntity(tempUri, CoolingCentreDto.class);
 
-            // TbGtnHwcwP -> row
-            JSONObject shuntPlaceParse = (JSONObject) jsonParser.parse(shuntPlace.toString());
-            JSONArray row = (JSONArray) shuntPlaceParse.get("row");
-
-            // row -> rowList
-            JSONArray rowList = (JSONArray) jsonParser.parse(row.toString());
-
-            // rowList -> rowParse -> rowData -> AREA_CDList
-            for (int i = 0; i < rowList.size(); i++) {
-                JSONObject rowParse = (JSONObject) rowList.get(i);
-                JSONObject rowData = (JSONObject) jsonParser.parse(rowParse.toString());
-                ShelterDto shelterDto = new ShelterDto();
-                shelterDto.setShelterType("finedustShelter");
-                shelterDto.setAreaCD(rowData.get("SN").toString());
-                finedustShelterList.add(shelterDto.toEntity());
-            }
-
-        } catch (ParseException e) {
-            e.printStackTrace();
+        //null 체크
+        if(tempApiResult.getBody() == null) {
+            return null;
         }
 
-        shelterRepository.saveAll(finedustShelterList);
+        //응답 결과 코드 검사
+        if(!tempApiResult.getBody().getTbGtnHwcwP().getResult().getCode().equals("INFO-000")) {
+            return null;
+        }
+
+        //리스트 마지막 숫자
+        listEndNum = tempApiResult.getBody().getTbGtnHwcwP().getListTotalCount();
+
+        while(true) {
+
+            //페이지 마지막 숫자가 리스트 마지막 숫자까지만 요청하도록
+            if(pageEndNum > listEndNum) {
+                pageEndNum = listEndNum;
+            }
+
+            //api request uri
+            URI uri = UriComponentsBuilder
+                    .fromUriString(baseUrl)
+                    .path(seoulDataKey + "/" + "JSON" + "/" + "TbGtnHwcwP" + "/" + pageStartNum + "/" + pageEndNum + "/")
+                    .encode()
+                    .build()
+                    .toUri();
+
+            //api response
+            ResponseEntity<CoolingCentreDto> apiResult = restTemplate.getForEntity(uri, CoolingCentreDto.class);
+
+            //응답 결과 코드 검사
+            if(!apiResult.getBody().getTbGtnHwcwP().getResult().getCode().equals("INFO-000")) {
+                return null;
+            }
+
+            //응답 내용 검사
+            if (apiResult.getBody().getTbGtnHwcwP().getRow().isEmpty()) {
+                return null;
+            }
+            //응답 누적
+            coolingCentreData.addAll(apiResult.getBody().getTbGtnHwcwP().getRow());
+
+            //마지막 요청까지 모두 응답 누적했다면 break
+            if(pageEndNum == listEndNum) {
+                break;
+            }
+
+            //페이지 증가
+            pageStartNum += 1000;
+            pageEndNum += 1000;
+
+        }
+
+        return coolingCentreData;
     }
 
-    // 게시판 정보
-    public List<Shelter> getBoardData() {
-        return shelterRepository.findTop10ByOrderByShelterProperNumAsc();
+    //heating centre api request & response
+    public List<com.pick.nalsoom.Dto.Shelter.HeatingCentre.RowDto> requestHeatingCentreAPI () {
+        //api response result
+        List<com.pick.nalsoom.Dto.Shelter.HeatingCentre.RowDto> heatingCentreData = new ArrayList<>();
+
+        //api request condition
+        restTemplate = new RestTemplate();
+        String baseUrl = "http://openapi.seoul.go.kr:8088/";
+        int pageStartNum = 1;
+        int pageEndNum = 1000;
+        int listEndNum = 0;
+
+        //temp api request uri
+        URI tempUri = UriComponentsBuilder
+                .fromUriString(baseUrl)
+                .path(seoulDataKey + "/" + "JSON" + "/" + "TbGtnCwP" + "/" + 1 + "/" + 2 + "/")
+                .encode()
+                .build()
+                .toUri();
+
+        //temp api response
+        ResponseEntity<TbGtnCwPDto> tempApiResult = restTemplate.getForEntity(tempUri, TbGtnCwPDto.class);
+
+        //null 체크
+        if(tempApiResult.getBody() == null) {
+            return null;
+        }
+
+        //응답 결과 코드 검사
+        if(!tempApiResult.getBody().getResult().getCode().equals("INFO-000")) {
+            return null;
+        }
+
+        //리스트 마지막 숫자
+        listEndNum = tempApiResult.getBody().getListTotalCount();
+
+        while(true) {
+
+            //페이지 마지막 숫자가 리스트 마지막 숫자까지만 요청하도록
+            if(pageEndNum > listEndNum) {
+                pageEndNum = listEndNum;
+            }
+
+            //api request uri
+            URI uri = UriComponentsBuilder
+                    .fromUriString(baseUrl)
+                    .path(seoulDataKey + "/" + "JSON" + "/" + "TbGtnCwP" + "/" + pageStartNum + "/" + pageEndNum + "/")
+                    .encode()
+                    .build()
+                    .toUri();
+
+            //api response
+            ResponseEntity<TbGtnCwPDto> apiResult = restTemplate.getForEntity(uri, TbGtnCwPDto.class);
+
+            //응답 결과 코드 검사
+            if(!tempApiResult.getBody().getResult().getCode().equals("INFO-000")) {
+                return null;
+            }
+
+            //응답 내용 검사
+            if (apiResult.getBody().getRow().isEmpty()) {
+                return null;
+            }
+
+            //응답 누적
+            heatingCentreData.addAll(apiResult.getBody().getRow());
+
+            //마지막 요청까지 모두 응답 누적했다면 break
+            if(pageEndNum == listEndNum) {
+                break;
+            }
+
+            //페이지 증가
+            pageStartNum += 1000;
+            pageEndNum += 1000;
+        }
+
+        return heatingCentreData;
+    }
+
+    //fine dust shelter api request & response
+    public List<com.pick.nalsoom.Dto.Shelter.FinedustShelter.RowDto> requestFineDustShelterAPI() {
+
+        //api response result
+        List<com.pick.nalsoom.Dto.Shelter.FinedustShelter.RowDto> fineDustShelterData = new ArrayList<>();
+
+        //api request condition
+        restTemplate = new RestTemplate();
+        String baseUrl = "http://openapi.seoul.go.kr:8088/";
+        int pageStartNum = 1;
+        int pageEndNum = 1000;
+        int listEndNum = 0;
+
+        //temp api request uri
+        URI tempUri = UriComponentsBuilder
+                .fromUriString(baseUrl)
+                .path(seoulDataKey + "/" + "JSON" + "/" + "shuntPlace" + "/" + 1 + "/" + 2 + "/")
+                .encode()
+                .build()
+                .toUri();
+
+        //temp api response
+        ResponseEntity<ShuntPlaceDto> tempApiResult = restTemplate.getForEntity(tempUri, ShuntPlaceDto.class);
+
+        //null 체크
+        if(tempApiResult.getBody() == null) {
+            return null;
+        }
+
+        //응답 결과 코드 검사
+        if(!tempApiResult.getBody().getResult().getCode().equals("INFO-000")) {
+            return null;
+        }
+
+        //리스트 마지막 숫자
+        listEndNum = tempApiResult.getBody().getListTotalCount();
+
+        while(true) {
+
+            //페이지 마지막 숫자가 리스트 마지막 숫자까지만 요청하도록
+            if(pageEndNum > listEndNum) {
+                pageEndNum = listEndNum;
+            }
+
+            //api request uri
+            URI uri = UriComponentsBuilder
+                    .fromUriString(baseUrl)
+                    .path(seoulDataKey + "/" + "JSON" + "/" + "shuntPlace" + "/" + pageStartNum + "/" + pageEndNum + "/")
+                    .encode()
+                    .build()
+                    .toUri();
+
+            //api response
+            ResponseEntity<ShuntPlaceDto> apiResult = restTemplate.getForEntity(uri, ShuntPlaceDto.class);
+
+            //응답 결과 코드 검사
+            if(!tempApiResult.getBody().getResult().getCode().equals("INFO-000")) {
+                return null;
+            }
+
+            //응답 내용 검사
+            if (apiResult.getBody().getRow().isEmpty()) {
+                return null;
+            }
+
+            //응답 누적
+            fineDustShelterData.addAll(apiResult.getBody().getRow());
+
+            //마지막 요청까지 모두 응답 누적했다면 break
+            if(pageEndNum == listEndNum) {
+                break;
+            }
+
+            //페이지 증가
+            pageStartNum += 1000;
+            pageEndNum += 1000;
+        }
+
+        return fineDustShelterData;
     }
 }

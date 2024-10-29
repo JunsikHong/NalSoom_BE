@@ -11,5 +11,6 @@ public interface GoodRepository extends JpaRepository<Good, Long>{
     // @Query("SELECT g FROM Good g WHERE g.user.id = :userId")
     // List<Good> findGoodsByUserProperNum(@Param("userId") Long userId);
 
-    Optional<List<Good>> findByUserProperNum(Long userProperNum);
+    List<Good> findByUserProperNum(Long userProperNum);
+    List<Good> findByUserProperNumAndShelterProperNum(Long userProperNum, Long shelterProperNum);
 }

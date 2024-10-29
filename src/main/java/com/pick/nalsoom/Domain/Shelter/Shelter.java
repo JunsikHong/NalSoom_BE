@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "SHELTER_DETAIL_INFO_LIST")
+@Table(name = "SHELTER")
 @Builder
 @Entity
 public class Shelter {
@@ -29,30 +29,14 @@ public class Shelter {
     @Column(name = "SHELTER_TYPE")
     private String shelterType;
 
-    @Column(name = "AREA_CD")
-    private String areaCD;
-
-    @Column(name = "GOOD_COUNT")
-    private Long goodCount;
-
-    @Column(name = "REVIEW_COUNT")
-    private Long reviewCount;
-
-    @Column(name = "REVIEW_CONTENT")
-    private String reviewContent;
-
-    @Column(name = "RECENT_WRITE_TIME")
-    private String recentWriteTime;
+    @Column(name = "SHELTER_SN")
+    private String shelterSn;
 
     public ShelterDto toDto() {
         return ShelterDto.builder()
                 .shelterProperNum(shelterProperNum)
-                .shelterType(shelterType)
-                .areaCD(areaCD)
-                .goodCount(goodCount)
-                .reviewCount(reviewCount)
-                .reveiwContent(reviewContent)
-                .recentWriteTime(recentWriteTime)
+                .ShelterType(shelterType)
+                .ShelterSn(shelterSn)
                 .build();
     }
 }
