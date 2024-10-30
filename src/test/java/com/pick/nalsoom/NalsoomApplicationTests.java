@@ -7,7 +7,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 class NalsoomApplicationTests {
 
 	@Test
-	void contextLoads() {
+	void test() {
+		//given
+
+		//when
+
+		//then
+
 	}
 
 }
