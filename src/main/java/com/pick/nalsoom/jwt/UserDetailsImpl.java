@@ -6,7 +6,7 @@ import java.util.Collections;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.pick.nalsoom.Domain.User.User;
+import com.pick.nalsoom.domain.User;
 
 public class UserDetailsImpl implements UserDetails {
 
