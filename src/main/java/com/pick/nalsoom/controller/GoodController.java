@@ -5,6 +5,7 @@ import java.util.List;
 import com.pick.nalsoom.dto.GoodDto;
 import com.pick.nalsoom.utils.GoodDuplicateException;
 import com.pick.nalsoom.utils.NoSuchGoodException;
+import com.pick.nalsoom.utils.NoSuchShelterException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,17 +40,19 @@ public class GoodController {
 
     //post -> body 에 생성할 데이터를 담아서 보낸다
     @PostMapping
-    public ResponseEntity<GoodDto> putGoodData(@RequestBody GoodDto goodDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<GoodDto> putGoodData(
+            @RequestBody GoodDto goodDto,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+        GoodDto newGoodDto = null;
 
         if(goodDto.getShelterProperNum() == null) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         }
 
-        GoodDto newGoodDto = null;
-
         try {
             newGoodDto = goodService.postGoodData(userDetails, goodDto);
-        } catch (GoodDuplicateException e) {
+        } catch (NoSuchShelterException | GoodDuplicateException e) {
             System.out.println(e.getMessage());
         }
 

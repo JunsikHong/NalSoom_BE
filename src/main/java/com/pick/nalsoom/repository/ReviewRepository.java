@@ -10,4 +10,6 @@ public interface ReviewRepository extends JpaRepository<Review, Long>{
 
 
     List<Review> findTop10ByShelterProperNumOrderByReviewWriteTimeDesc(Long shelterProperNum);
+    List<Review> findByUserProperNumOrderByReviewWriteTimeDesc (Long userProperNum);
+    List<Review> findByUserProperNumAndShelterProperNum (Long userProperNum, Long shelterProperNum);
 }

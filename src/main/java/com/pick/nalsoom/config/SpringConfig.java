@@ -38,8 +38,8 @@ public class SpringConfig {
     }
 
     @Bean
-    public GoodService goodService(UserService userService) {
-        return new GoodService(goodRepository, userService);
+    public GoodService goodService(UserService userService, ShelterService shelterService) {
+        return new GoodService(goodRepository, userService, shelterService);
     }
 
     @Bean
@@ -48,8 +48,8 @@ public class SpringConfig {
     }
 
     @Bean
-    public ReviewService reviewService(UserService userService) {
-        return new ReviewService(reviewRepository, userService);
+    public ReviewService reviewService(UserService userService, ShelterService shelterService) {
+        return new ReviewService(reviewRepository, userService, shelterService);
     }
 
     @Bean

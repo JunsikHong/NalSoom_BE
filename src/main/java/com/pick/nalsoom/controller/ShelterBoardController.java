@@ -4,6 +4,7 @@ import com.pick.nalsoom.dto.ShelterViewDto;
 import com.pick.nalsoom.service.ShelterBoardService;
 import com.pick.nalsoom.utils.NoSuchShelterException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,36 +22,50 @@ public class ShelterBoardController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ShelterViewDto>> getShelterData() {
-        List<ShelterViewDto> shelterViewDtoList = null;
-        try {
-            shelterViewDtoList = shelterBoardService.getSheltersData();
-        } catch (NoSuchShelterException e) {
-            System.out.println(e.getMessage());
-        }
-        return ResponseEntity.ok().body(shelterViewDtoList);
-    }
+    public ResponseEntity<List<ShelterViewDto>> getShelterData(
+            @RequestParam(name = "searchShelterType", defaultValue = "normal") String searchShelterType,
+            @RequestParam(name = "searchSortBy", defaultValue = "good") String searchSortBy,
+            @RequestParam(name = "searchSortDirection", defaultValue = "desc") String searchSortDirection,
+            @RequestParam(name = "shelterProperNum", required = false) List<Long> shelterProperNum,
+            @RequestParam(name = "searchPaging", defaultValue = "0") int searchPaging,
+            @RequestParam(name = "searchSize", defaultValue = "10") int searchSize
+    ) {
 
-    @GetMapping("/boundIn")
-    public ResponseEntity<List<ShelterViewDto>> getBoundInShelterData (
-            @RequestParam("shelterSN") List<String> shelterSN,
-            @RequestParam("type") List<String> type) {
-
+        //검색 결과
         List<ShelterViewDto> shelterViewDtoList = null;
 
-        //요청 인자 확인
-        if(shelterSN.isEmpty() && type.isEmpty()) {
-            throw new IllegalArgumentException("No Argument Exception");
+        //대피소 타입 예외 처리
+        if (!(searchShelterType.equals("normal") || searchShelterType.equals("TbGtnHwcwP") || searchShelterType.equals("TbGtnCwP") || searchShelterType.equals("shuntPlace"))) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+        }
+
+        //정렬 타입 예외 처리
+        if (!(searchSortBy.equals("good") || searchSortBy.equals("review") || searchSortBy.equals("distance"))) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+        }
+
+        //정렬 방법 예외 처리
+        if (!(searchSortDirection.equals("asc") || searchSortDirection.equals("desc"))) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+        }
+
+        //페이지 예외 처리
+        if (searchPaging < 0) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         }
 
         try {
-            shelterViewDtoList = shelterBoardService.getShelterData(shelterSN, type);
-        } catch (NoSuchShelterException e) {
+            //정렬 타입이 distance 일 때 다른 비즈니스 로직 호출
+            if (searchSortBy.equals("distance")) {
+                shelterViewDtoList = shelterBoardService.getInBoundShelterData(searchShelterType, searchSortBy, searchSortDirection, shelterProperNum, searchPaging, searchSize);
+            } else {
+                shelterViewDtoList = shelterBoardService.getShelterData(searchShelterType, searchSortBy, searchSortDirection, searchPaging, searchSize);
+            }
+        } catch(NoSuchShelterException e) {
             System.out.println(e.getMessage());
         }
 
         return ResponseEntity.ok().body(shelterViewDtoList);
-
     }
 
 }
