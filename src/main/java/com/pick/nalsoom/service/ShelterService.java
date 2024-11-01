@@ -33,6 +33,11 @@ public class ShelterService {
         this.shelterRepository = shelterRepository;
     }
 
+    //shelter 존재 여부
+    public boolean existShelterData(Long shelterProperNum) {
+        return shelterRepository.existsById(shelterProperNum);
+    }
+
     //seoul api 의 shelter api 는 매 월 말일에 업데이트 됨 -> 매 월 1일에 Shelter data 업데이트
     @Scheduled(cron = "0 0 0 1 * ?")
     public void updateSheltersData () {

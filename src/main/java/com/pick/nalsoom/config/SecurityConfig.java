@@ -3,8 +3,10 @@ package com.pick.nalsoom.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,15 +35,17 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-        .csrf(csrf -> csrf.disable()) // csrf 공격 해제
-        .logout(out -> out.disable()) // 기본 로그아웃 해제
-        .formLogin(form -> form.disable()) // formLogin 인증 해제
-        .httpBasic(basic -> basic.disable()) // spring 기본 인증 해제
+        .csrf(AbstractHttpConfigurer::disable) // csrf 공격 해제
+        .logout(AbstractHttpConfigurer::disable) // 기본 로그아웃 해제
+        .formLogin(AbstractHttpConfigurer::disable) // formLogin 인증 해제
+        .httpBasic(AbstractHttpConfigurer::disable) // spring 기본 인증 해제
         .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 인증                                                                                               // 해제
 
         .authorizeHttpRequests((authorize) -> authorize
-            .requestMatchers("/api/v1/good/**").authenticated() // good 요청은 인증된 사용자만
-            .anyRequest().permitAll())
+                .requestMatchers("/api/v1/user/**").permitAll() //유저 인증 요청은 모두 permit
+                .requestMatchers(HttpMethod.GET, "/api/v1/board/shelter").permitAll() //대피소 게시판 GET 요청은 모두 permit
+                .requestMatchers(HttpMethod.GET, "/api/v1/review/public/**").permitAll() //대피소 게시판에 표시 될 리뷰 GET 요청은 모두 permit
+                .anyRequest().authenticated()) //그 외에는 모두 회원 기능
 
         .addFilterBefore(new JwtAuthorizationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
 

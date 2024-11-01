@@ -20,6 +20,7 @@ public class ReviewDto {
     private Timestamp reviewWriteTime;
     private Long userProperNum;
     private Long shelterProperNum;
+    private boolean myReview;
 
     public Review toEntity() {
         return Review.builder()

@@ -29,18 +29,26 @@ public class User {
     @Column(name = "USER_ID")
     private String userId;
 
+    @Column(name = "USER_NAME")
+    private String userName;
+
     @Column(name = "USER_PW")
     private String userPw;
 
     @Column(name = "USER_EMAIL")
     private String userEmail;
 
+    @Column(name = "USER_ADDRESS")
+    private String userAddress;
+
     public UserDto toDto() {
         return UserDto.builder()
                 .userProperNum(userProperNum)
                 .userId(userId)
+                .userName(userName)
                 .userPw(userPw)
                 .userEmail(userEmail)
+                .userAddress(userAddress)
                 .build();
     }
 }

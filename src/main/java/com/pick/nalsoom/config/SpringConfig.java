@@ -1,11 +1,13 @@
 package com.pick.nalsoom.config;
 
 import com.pick.nalsoom.aop.TimeTraceAop;
+import com.pick.nalsoom.jwt.JwtTokenProvider;
 import com.pick.nalsoom.repository.*;
 import com.pick.nalsoom.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.client.RestTemplate;
 
 
@@ -33,23 +35,8 @@ public class SpringConfig {
     }
 
     @Bean
-    public FavoritesService favoritesService(UserService userService) {
-        return new FavoritesService(favoritesRepository, userService);
-    }
-
-    @Bean
-    public GoodService goodService(UserService userService) {
-        return new GoodService(goodRepository, userService);
-    }
-
-    @Bean
-    public NotificationService notificationService(UserService userService) {
-        return new NotificationService(notificationRepository, userService);
-    }
-
-    @Bean
-    public ReviewService reviewService(UserService userService) {
-        return new ReviewService(reviewRepository, userService);
+    public UserService userService(PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider) {
+        return new UserService(userRepository, passwordEncoder, jwtTokenProvider);
     }
 
     @Bean
@@ -63,19 +50,23 @@ public class SpringConfig {
     }
 
     @Bean
-    public UserService userService() {
-        return new UserService(userRepository);
+    public GoodService goodService(UserService userService, ShelterService shelterService) {
+        return new GoodService(goodRepository, userService, shelterService);
     }
 
-    //시간측정
-    /*@Bean
-    public TimeTraceAop timeTraceAop() {
-        return new TimeTraceAop();
-    }*/
-
-    //restTemplate
     @Bean
-    RestTemplate restTemplate() {
-        return new RestTemplate();
+    public ReviewService reviewService(UserService userService, ShelterService shelterService) {
+        return new ReviewService(reviewRepository, userService, shelterService);
     }
+
+    @Bean
+    public FavoritesService favoritesService(UserService userService) {
+        return new FavoritesService(favoritesRepository, userService);
+    }
+
+    @Bean
+    public NotificationService notificationService(UserService userService) {
+        return new NotificationService(notificationRepository, userService);
+    }
+
 }
