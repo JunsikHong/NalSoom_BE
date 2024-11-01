@@ -8,11 +8,6 @@ class NalsoomApplicationTests {
 
 	@Test
 	void test() {
-		//given
-
-		//when
-
-		//then
 
 	}
 

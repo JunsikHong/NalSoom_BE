@@ -15,15 +15,19 @@ public class UserDto {
 
     private Long userProperNum;
     private String userId;
+    private String userName;
     private String userPw;
     private String userEmail;
+    private String userAddress;
 
     public User toEntity() {
         return User.builder()
                 .userProperNum(userProperNum)
                 .userId(userId)
+                .userName(userName)
                 .userPw(userPw)
                 .userEmail(userEmail)
+                .userAddress(userAddress)
                 .build();
     }
 }
