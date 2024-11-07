@@ -5,6 +5,7 @@ import java.util.Optional;
 import com.pick.nalsoom.utils.InvalidTokenException;
 import com.pick.nalsoom.utils.NoSuchUserException;
 import com.pick.nalsoom.utils.UserDuplicateException;
+import lombok.RequiredArgsConstructor;
 import org.apache.el.parser.TokenMgrError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,18 +20,12 @@ import com.pick.nalsoom.jwt.JwtTokenProvider;
 import com.pick.nalsoom.jwt.UserDetailsImpl;
 
 @Service("userService")
+@RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
-
-    @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.jwtTokenProvider = jwtTokenProvider;
-    }
 
     // 아이디 중복검사
     public void idDuplicateCheck(String userId) {

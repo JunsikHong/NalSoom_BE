@@ -5,6 +5,7 @@ import com.pick.nalsoom.service.ReviewService;
 import com.pick.nalsoom.jwt.UserDetailsImpl;
 import com.pick.nalsoom.utils.NoSuchReviewException;
 import com.pick.nalsoom.utils.NoSuchShelterException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,14 +16,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/review")
+@RequiredArgsConstructor
 public class ReviewController {
 
     private final ReviewService reviewService;
-
-    @Autowired
-    public ReviewController(ReviewService reviewService) {
-        this.reviewService = reviewService;
-    }
 
     //Review 기능 RestFul API 설계
     //기본적으로 회원기능이기에 헤더에 유저정보를 담아서 요청한다
@@ -33,40 +30,53 @@ public class ReviewController {
     //예외2) 마이페이지 에서 대피소 별이 아닌 자신의 리뷰 데이터 요청 보낼 수 있기에 대응하기 위해 my-review 생성
 
     //not login
-    @GetMapping("/public/{shelterProperNum}")
+    @GetMapping
     public ResponseEntity<List<ReviewDto>> getReviewData (
-            @PathVariable("shelterProperNum") Long shelterProperNum) {
+            @RequestParam(name = "shelterProperNum") Long shelterProperNum,
+            @RequestParam(name = "reviewPaging", defaultValue = "0") int reviewPaging,
+            @RequestParam(name = "reviewPagingSize", defaultValue = "10") int reviewPagingSize
+    ) {
 
+        List<ReviewDto> reviewDtoList = null;
         if(shelterProperNum == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
 
-        return ResponseEntity.ok().body(reviewService.getReviewData(shelterProperNum));
+        try {
+            reviewDtoList = reviewService.getReviewData(shelterProperNum, reviewPaging, reviewPagingSize);
+        } catch (NoSuchShelterException e) {
+            System.out.println(e.getMessage());
+        }
 
+        return ResponseEntity.ok().body(reviewDtoList);
     }
 
     //login
-    @GetMapping("/private/{shelterProperNum}")
-    public ResponseEntity<List<ReviewDto>> getReviewData (
-            @PathVariable("shelterProperNum") Long shelterProperNum,
+    @GetMapping("/my-review")
+    public ResponseEntity<List<ReviewDto>> getMyReviewData (
+            @RequestParam(name = "shelterProperNum") Long shelterProperNum,
+            @RequestParam(name = "reviewPaging", defaultValue = "0") int reviewPaging,
+            @RequestParam(name = "reviewPagingSize", defaultValue = "10") int reviewPagingSize,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+        List<ReviewDto> reviewDtoList = null;
 
         if(shelterProperNum == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
 
-        return ResponseEntity.ok().body(reviewService.getReviewData(shelterProperNum, userDetails));
+        try {
+            reviewDtoList = reviewService.getMyReviewData(userDetails, shelterProperNum, reviewPaging, reviewPagingSize);
+        } catch (NoSuchShelterException e) {
+            System.out.println(e.getMessage());
+        }
 
-    }
+        return ResponseEntity.ok().body(reviewDtoList);
 
-    @GetMapping ("my-review")
-    public ResponseEntity<List<ReviewDto>> getMyReviewData (
-            @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return ResponseEntity.ok().body(reviewService.getMyReviewData(userDetails));
     }
 
     @PostMapping
-    public ResponseEntity<ReviewDto> putReviewData(
+    public ResponseEntity<ReviewDto> createReviewData(
             @RequestBody ReviewDto reviewDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
@@ -82,7 +92,7 @@ public class ReviewController {
         }
 
         try {
-            newReview = reviewService.putReviewData(userDetails, reviewDto);
+            newReview = reviewService.createReviewData(userDetails, reviewDto);
         } catch (NoSuchShelterException e) {
             System.out.println(e.getMessage());
         }
@@ -96,6 +106,10 @@ public class ReviewController {
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
         ReviewDto modifiedReview = null;
+
+        if(reviewDto.getReviewProperNum() == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
 
         if(reviewDto.getShelterProperNum() == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);

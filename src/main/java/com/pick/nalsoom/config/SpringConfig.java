@@ -20,18 +20,20 @@ public class SpringConfig {
     private final NotificationRepository notificationRepository;
     private final ReviewRepository reviewRepository;
     private final ShelterRepository shelterRepository;
-    private final ShelterBoardRepository shelterBoardRepository;
     private final UserRepository userRepository;
+    private final PostRepository postRepository;
+    private final ShelterViewRepository shelterViewRepository;
 
     @Autowired
-    public SpringConfig(FavoritesRepository favoritesRepository, GoodRepository goodRepository, NotificationRepository notificationRepository, ReviewRepository reviewRepository, ShelterRepository shelterRepository, ShelterBoardRepository shelterBoardRepository, UserRepository userRepository) {
+    public SpringConfig(FavoritesRepository favoritesRepository, GoodRepository goodRepository, NotificationRepository notificationRepository, ReviewRepository reviewRepository, ShelterRepository shelterRepository, UserRepository userRepository, PostRepository postRepository, ShelterViewRepository shelterViewRepository) {
         this.favoritesRepository = favoritesRepository;
         this.goodRepository = goodRepository;
         this.notificationRepository = notificationRepository;
         this.reviewRepository = reviewRepository;
         this.shelterRepository = shelterRepository;
-        this.shelterBoardRepository = shelterBoardRepository;
         this.userRepository = userRepository;
+        this.postRepository = postRepository;
+        this.shelterViewRepository = shelterViewRepository;
     }
 
     @Bean
@@ -40,13 +42,13 @@ public class SpringConfig {
     }
 
     @Bean
-    public ShelterBoardService shelterBoardService(UserService userService) {
-        return new ShelterBoardService(shelterBoardRepository, userService);
+    public PostService postService(UserService userService, ShelterService shelterService) {
+        return new PostService(postRepository, userService, shelterService);
     }
 
     @Bean
-    public ShelterService shelterService() {
-        return new ShelterService(shelterRepository);
+    public ShelterViewService shelterViewService () {
+        return new ShelterViewService(shelterViewRepository);
     }
 
     @Bean
@@ -69,4 +71,8 @@ public class SpringConfig {
         return new NotificationService(notificationRepository, userService);
     }
 
+    @Bean
+    public ShelterService shelterService(RestTemplate restTemplate) {
+        return new ShelterService(shelterRepository, restTemplate);
+    }
 }

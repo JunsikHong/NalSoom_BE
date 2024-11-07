@@ -3,33 +3,24 @@ package com.pick.nalsoom.service;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import com.pick.nalsoom.domain.ShelterView;
-import com.pick.nalsoom.utils.NoSuchShelterException;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.pick.nalsoom.dto.ShelterViewDto;
-import com.pick.nalsoom.repository.ShelterBoardRepository;
+import com.pick.nalsoom.repository.ShelterViewRepository;
 
-@Service("shelterBoardService")
-public class ShelterBoardService {
+@Service("shelterViewService")
+@RequiredArgsConstructor
+public class ShelterViewService {
 
-    private final ShelterBoardRepository shelterBoardRepository;
-    private final UserService userService;
+    private final ShelterViewRepository shelterViewRepository;
 
-    @Autowired
-    public ShelterBoardService(ShelterBoardRepository shelterBoardRepository, UserService userService) {
-        this.shelterBoardRepository = shelterBoardRepository;
-        this.userService = userService;
-    }
-
-    public List<ShelterViewDto> getShelterData(String searchShelterType, String searchSortBy, String searchSortDirection, int searchPaging, int searchSize) {
+    public List<ShelterViewDto> getShelterData(String searchShelterType, String searchSortBy, int searchPaging, int searchSize) {
 
         //대피소 타입이 기본 일 때 계절 반영
         if (searchShelterType.equals("normal")) {
@@ -39,29 +30,28 @@ public class ShelterBoardService {
         //정렬 타입 -> 컬럼 명
         searchSortBy = determineSortBy(searchSortBy);
 
-        Sort sort = Sort.by(Sort.Direction.fromString(searchSortDirection), searchSortBy);
+        Sort sort = Sort.by(Sort.Direction.fromString("desc"), searchSortBy);
         Pageable pageable = PageRequest.of(searchPaging, searchSize, sort);
-        List<ShelterView> shelterList = shelterBoardRepository.findByShelterType(searchShelterType, pageable);
-        return shelterList.stream().map(ShelterView::toDto).collect(Collectors.toList());
+
+        return shelterViewRepository.findByShelterType(searchShelterType, pageable)
+                .stream().map(ShelterView::toDto).toList();
     }
 
-    public List<ShelterViewDto> getInBoundShelterData(String searchShelterType, String searchSortBy, String searchSortDirection, List<Long> shelterProperNum, int searchPaging, int searchSize) {
-
-        //sn, type 유효성 검사
-        if (!shelterProperNum.isEmpty()) {
-            throw new NoSuchShelterException("No such shelter");
-        }
+    public List<ShelterViewDto> getShelterData(String searchShelterType, String searchSortBy, List<Long> shelterProperNum, int searchPaging, int searchSize) {
 
         //대피소 타입이 기본 일 때 계절 반영
         if (searchShelterType.equals("normal")) {
             determineShelterType(searchShelterType);
         }
 
-        Sort sort = Sort.by(Sort.Direction.fromString(searchSortDirection), searchSortBy);
+        //정렬 타입 -> 컬럼 명
+        searchSortBy = determineSortBy(searchSortBy);
+
+        Sort sort = Sort.by(Sort.Direction.fromString("desc"), searchSortBy);
         Pageable pageable = PageRequest.of(searchPaging, searchSize, sort);
 
-        List<ShelterView> shelterViewDtoList = shelterBoardRepository.findAllByShelterProperNumInAndShelterType(shelterProperNum, searchShelterType, pageable);
-        return shelterViewDtoList.stream().map(ShelterView::toDto).collect(Collectors.toList());
+        return shelterViewRepository.findAllByShelterProperNumInAndShelterType(shelterProperNum, searchShelterType, pageable)
+                .stream().map(ShelterView::toDto).toList();
     }
 
     public String determineShelterType (String searchShelterType) {
@@ -89,3 +79,4 @@ public class ShelterBoardService {
         return result;
     }
 }
+

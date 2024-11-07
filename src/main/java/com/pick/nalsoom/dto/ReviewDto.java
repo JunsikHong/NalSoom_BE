@@ -7,7 +7,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Date;
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -20,7 +23,6 @@ public class ReviewDto {
     private Timestamp reviewWriteTime;
     private Long userProperNum;
     private Long shelterProperNum;
-    private boolean myReview;
 
     public Review toEntity() {
         return Review.builder()
