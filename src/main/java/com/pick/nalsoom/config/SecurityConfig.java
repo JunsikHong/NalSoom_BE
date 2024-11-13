@@ -44,8 +44,7 @@ public class SecurityConfig {
         .authorizeHttpRequests((authorize) -> authorize
                 .requestMatchers("/api/v1/user/**").permitAll() //유저 인증 요청은 모두 permit
                 .requestMatchers(HttpMethod.GET, "/api/v1/board/shelter/**").permitAll() //대피소 게시판 GET 요청은 모두 permit
-                .requestMatchers("/api/v1/review/**").permitAll() //대피소 게시판에 표시 될 리뷰 GET 요청은 모두 permit
-                .requestMatchers("/api/v1/good/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/review/**").permitAll() //대피소 게시판에 표시 될 리뷰 GET 요청은 모두 permit
                 .anyRequest().authenticated()) //그 외에는 모두 회원 기능
 
         .addFilterBefore(new JwtAuthorizationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
