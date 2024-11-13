@@ -6,6 +6,7 @@ import com.pick.nalsoom.dto.GoodDto;
 import com.pick.nalsoom.utils.GoodDuplicateException;
 import com.pick.nalsoom.utils.NoSuchGoodException;
 import com.pick.nalsoom.utils.NoSuchShelterException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,14 +19,10 @@ import com.pick.nalsoom.jwt.UserDetailsImpl;
 
 @RestController
 @RequestMapping("/api/v1/good")
+@RequiredArgsConstructor
 public class GoodController {
 
     private final GoodService goodService;
-
-    @Autowired
-    public GoodController(GoodService goodService ) {
-        this.goodService = goodService;
-    }
 
     //Good 기능 RestFul API 설계
     //기본적으로 회원기능이기에 헤더에 유저정보를 담아서 요청한다
@@ -34,8 +31,9 @@ public class GoodController {
 
     //get -> url 에 조회 할 조건을 담아서 보낸다
     @GetMapping
-    public ResponseEntity<List<GoodDto>> getGoodData(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return ResponseEntity.ok(goodService.getGoodData(userDetails));
+    public ResponseEntity<List<GoodDto>> getGoodData(
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseEntity.ok().body(goodService.getMyGoodData(userDetails));
     }
 
     //post -> body 에 생성할 데이터를 담아서 보낸다
@@ -51,7 +49,7 @@ public class GoodController {
         }
 
         try {
-            newGoodDto = goodService.postGoodData(userDetails, goodDto);
+            newGoodDto = goodService.createGoodData(userDetails, goodDto);
         } catch (NoSuchShelterException | GoodDuplicateException e) {
             System.out.println(e.getMessage());
         }
@@ -61,7 +59,9 @@ public class GoodController {
 
     //delete -> url 에 삭제 할 조건을 담아서 보낸다
     @DeleteMapping("/{goodProperNum}")
-    public ResponseEntity<Object> deleteGoodData(@PathVariable("goodProperNum") String goodProperNum, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<Object> deleteGoodData(
+            @PathVariable("goodProperNum") String goodProperNum,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
         try {
             goodService.deleteGoodData(userDetails, Long.parseLong(goodProperNum));
@@ -69,6 +69,6 @@ public class GoodController {
             System.out.println(e.getMessage());
         }
 
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     }
 }

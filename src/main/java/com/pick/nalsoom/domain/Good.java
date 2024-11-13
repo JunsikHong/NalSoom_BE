@@ -2,21 +2,16 @@ package com.pick.nalsoom.domain;
 
 import com.pick.nalsoom.dto.GoodDto;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
+import java.sql.Date;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Data
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Table(name = "GOOD")
 @Builder
@@ -28,7 +23,9 @@ public class Good {
     @Column(name = "GOOD_PROPER_NUM")
     private Long goodProperNum;
 
-    @Column(name = "GOOD_TIME", nullable = false, updatable = false, insertable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @CreationTimestamp
+    @Column(name = "GOOD_TIME", nullable = false, updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
     private Timestamp goodTime;
 
     @Column(name = "USER_PROPER_NUM")

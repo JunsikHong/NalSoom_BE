@@ -5,6 +5,8 @@ import com.pick.nalsoom.dto.ShelterApi.CoolingCentre.CoolingCentreDto;
 import com.pick.nalsoom.dto.ShelterApi.FinedustShelter.FineDustShelterDto;
 import com.pick.nalsoom.dto.ShelterApi.HeatingCentre.HeatingCentreDto;
 import com.pick.nalsoom.repository.ShelterRepository;
+import com.pick.nalsoom.utils.NoSuchShelterException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -16,26 +18,21 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service("shelterService")
+@RequiredArgsConstructor
 public class ShelterService {
 
     @Value("${seoul-data-key}")
     private String seoulDataKey;
 
-    @Autowired
-    private RestTemplate restTemplate;
-
     private final ShelterRepository shelterRepository;
+    private final RestTemplate restTemplate;
 
-    @Autowired
-    public ShelterService(ShelterRepository shelterRepository) {
-        this.shelterRepository = shelterRepository;
-    }
-
-    //shelter 존재 여부
-    public boolean existShelterData(Long shelterProperNum) {
-        return shelterRepository.existsById(shelterProperNum);
+    //shelter find
+    public Optional<Shelter> findOneShelter (Long shelterProperNum) {
+        return shelterRepository.findById(shelterProperNum);
     }
 
     //seoul api 의 shelter api 는 매 월 말일에 업데이트 됨 -> 매 월 1일에 Shelter data 업데이트

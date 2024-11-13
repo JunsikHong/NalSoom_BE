@@ -3,6 +3,7 @@ package com.pick.nalsoom.controller;
 import com.pick.nalsoom.utils.InvalidTokenException;
 import com.pick.nalsoom.utils.NoSuchUserException;
 import com.pick.nalsoom.utils.UserDuplicateException;
+import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,14 +19,10 @@ import com.pick.nalsoom.jwt.JwtToken;
 
 @RestController
 @RequestMapping("/api/v1/user")
+@RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
-
-    @Autowired
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
 
     //이메일 발송
     @PostMapping("/sendEmail")
