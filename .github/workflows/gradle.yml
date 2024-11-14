@@ -65,3 +65,24 @@ jobs:
     # See: https://github.com/gradle/actions/blob/main/dependency-submission/README.md
     - name: Generate and submit dependency graph
       uses: gradle/actions/dependency-submission@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
+
+    - name: Copy files to server
+      uses: appleboy/scp-action@v0.1.0
+      with:
+        host: ${{ secrets.SERVER_IP }}  # 서버 IP
+        username: ${{ secrets.USERNAME }}  # SSH 사용자 이름
+        key: ${{ secrets.SSH_KEY }}  # 비공개 SSH 키
+        port: 22  # SSH 포트
+        source: "target/*.jar"  # 빌드된 JAR 파일 경로
+        target: "/path/to/deploy/directory/"  # 배포할 서버의 디렉토리
+
+    - name: Execute on remote server
+      uses: appleboy/ssh-action@v0.1.0
+      with:
+        host: ${{ secrets.SERVER_IP }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.SSH_KEY }}
+        port: 22
+        script: |
+          cd /path/to/deploy/directory/
+          nohup java -jar your-app.jar > app.log 2>&1 &
