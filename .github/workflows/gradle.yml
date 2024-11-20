@@ -90,7 +90,7 @@ jobs:
         scp build/libs/*.jar gcp-instance:$DEPLOY_DIR/
         
         # 배포 스크립트 생성 및 실행
-        ssh gcp-instance "cat > $DEPLOY_DIR/deploy.sh << EOF"
+        ssh gcp-instance "cat > $DEPLOY_DIR/deploy.sh" EOF
         
         # 이전 프로세스 종료
         CURRENT_PID=$(pgrep -f "${{ env.PROJECT_NAME }}")
@@ -106,6 +106,6 @@ jobs:
         nohup java -jar $JAR_NAME > nohup.out 2>&1 &
         
         echo "배포 완료"
-        EOF"
+        EOF
 
         ssh gcp-instance "cd $DEPLOY_DIR && chmod +x deploy.sh && ./deploy.sh"
