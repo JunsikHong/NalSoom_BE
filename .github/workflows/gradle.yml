@@ -107,6 +107,6 @@ jobs:
         nohup java -jar $JAR_NAME > nohup.out 2>&1 &
         
         echo "배포 완료"
-        EOF
+        'EOF'
 
         ssh gcp-instance "cd $DEPLOY_DIR && chmod +x deploy.sh && ./deploy.sh"
