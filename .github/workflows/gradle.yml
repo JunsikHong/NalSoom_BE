@@ -88,10 +88,8 @@ jobs:
         # 배포 스크립트 생성 및 실행
         ssh gcp-instance "cat > $DEPLOY_DIR/deploy.sh << 'EOF'
 
-        PROJECT_VERSION="0.0.1-SNAPSHOT"
-        
         # 이전 프로세스 종료
-        CURRENT_PID="$(pgrep -f nalsoom-$PROJECT_VERSION.jar)"
+        CURRENT_PID="$(pgrep -f nalsoom-0.0.1-SNAPSHOT.jar)"
         if [ -n "$CURRENT_PID" ]; then
           echo "현재 구동중인 애플리케이션 종료"
           kill "$CURRENT_PID"
@@ -99,7 +97,7 @@ jobs:
         fi
         
         # 새로운 프로세스 시작
-        JAR_NAME="nalsoom-$PROJECT_VERSION.jar"
+        JAR_NAME="nalsoom-0.0.1-SNAPSHOT.jar"
         echo "새로운 애플리케이션 배포 시작: $JAR_NAME"
         nohup java -jar "$JAR_NAME" > nohup.out 2>&1 &
         echo "배포 완료"
