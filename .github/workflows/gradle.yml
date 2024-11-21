@@ -91,17 +91,15 @@ jobs:
         ssh gcp-instance "cat > $DEPLOY_DIR/deploy.sh << 'EOF'
 
         #!/bin/bash
-        PROJECT_VERSION="0.0.1-SNAPSHOT"
-        CURRENT_PID=$(pgrep -f nalsoom-${PROJECT_VERSION}.jar)
-        if [ -n ${CURRENT_PID} ]; then
+        CURRENT_PID=$(pgrep -f nalsoom-0.0.1-SNAPSHOT.jar)
+        if [ ! -z ${CURRENT_PID} ]; then
           echo "현재 구동중인 애플리케이션 종료 ${CURRENT_PID}"
           kill ${CURRENT_PID}
           sleep 5
         fi
         
-        JAR_NAME="nalsoom-${PROJECT_VERSION}.jar"
-        echo "새로운 애플리케이션 배포 시작: ${JAR_NAME}"
-        nohup java -jar ${JAR_NAME} > nohup.out 2>&1 &
+        echo "새로운 애플리케이션 배포 시작: nalsoom-0.0.1-SNAPSHOT.jar"
+        nohup java -jar nalsoom-0.0.1-SNAPSHOT.jar > nohup.out 2>&1 &
         echo "배포 완료"
         EOF"
 
