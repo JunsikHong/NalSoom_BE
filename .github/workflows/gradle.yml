@@ -26,39 +26,42 @@ jobs:
       run: |
         mkdir -p ./src/main/resources
         cat << EOF > ./src/main/resources/application.yml
+        server:
+          port: 8080
+        
         spring:
-            datasource:
-              url: ${{ secrets.DB_URL }}
-              username: ${{ secrets.DB_USERNAME }}
-              password: ${{ secrets.DB_PASSWORD }}
-              driver-class-name: com.mysql.cj.jdbc.Driver
+          application:
+            name: nalsoom
             
-            jpa:
-              database: mysql
-                show-sql: false
-                hibernate:
-                  ddl-auto: none
-                  naming:
-                    physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+          datasource:
+            url: ${{ secrets.DB_URL }}
+            username: ${{ secrets.DB_USERNAME }}
+            password: ${{ secrets.DB_PASSWORD }}
+            driver-class-name: com.mysql.cj.jdbc.Driver
             
-            server:
-              port: 8080
-
-            jasypt:
-              encryptor:
-                bean : jasyptEncryptor
-                password : ${{ secrets.JASYPT_KEY }}
+          jpa:
+            database: mysql
+            show-sql: false
+            hibernate:
+              ddl-auto: none
+              naming:
+                physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+                
+        jasypt:
+          encryptor:
+            bean : jasyptEncryptor
+            password : ${{ secrets.JASYPT_KEY }}
             
-            custom:
-              jwt:
-                auth_header: Authorization
-                token_type: Bearer 
-                secret: ${{ secrets.JWT_KEY }}
-                expiration_time: 86400000
-                refresh_time: 8640000000
-
-            seoul-data-key: ${{ secrets.SEOUL_DATA_KEY }}
-            EOF
+        custom:
+          jwt:
+            auth_header: Authorization
+            token_type: Bearer 
+            secret: ${{ secrets.JWT_KEY }}
+            expiration_time: 86400000
+            refresh_time: 8640000000
+            
+        seoul-data-key: ${{ secrets.SEOUL_DATA_KEY }}
+        EOF
             
     - name: Build with Gradle
       run: ./gradlew build -x test
