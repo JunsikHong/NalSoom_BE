@@ -7,7 +7,7 @@ on:
 
 env:
   PROJECT_NAME: 'nalsoom'
-  PROJECT_VERSION: '0.0.1'
+  PROJECT_VERSION: '0.0.1-SNAPSHOT'
   JAVA_VERSION: '17'
   
 jobs:
@@ -94,16 +94,16 @@ jobs:
         ssh gcp-instance "cat > $DEPLOY_DIR/deploy.sh << 'EOF'
         
         # 이전 프로세스 종료
-        CURRENT_PID=\$(pgrep -f "${{ env.PROJECT_NAME }}-${{ env.PROJECT_VERSION }}.jar")
+        CURRENT_PID="$(pgrep -f ${{ env.PROJECT_NAME }}-${{ env.PROJECT_VERSION }}.jar)"
         if [ -n "${CURRENT_PID}" ]; then
-          echo "현재 구동중인 애플리케이션 종료 (PID: ${CURRENT_PID})"
+          echo "현재 구동중인 애플리케이션 종료"
           kill "${CURRENT_PID}"
           sleep 5
         fi
         
         # 새로운 프로세스 시작
-        JAR_NAME=$(ls *.jar)
-        echo "새로운 애플리케이션 배포 시작: $JAR_NAME"
+        JAR_NAME="${{ env.PROJECT_NAME }}-${{ env.PROJECT_VERSION }}.jar"
+        echo "새로운 애플리케이션 배포 시작: ${JAR_NAME}"
         nohup java -jar $JAR_NAME > nohup.out 2>&1 &
         
         echo "배포 완료"
