@@ -105,8 +105,7 @@ jobs:
         JAR_NAME="${{ env.PROJECT_NAME }}-${{ env.PROJECT_VERSION }}.jar"
         echo "새로운 애플리케이션 배포 시작: ${JAR_NAME}"
         nohup java -jar $JAR_NAME > nohup.out 2>&1 &
-        
         echo "배포 완료"
-        'EOF'
+        EOF"
 
         ssh gcp-instance "cd $DEPLOY_DIR && chmod +x deploy.sh && ./deploy.sh"
