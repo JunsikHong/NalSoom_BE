@@ -104,7 +104,7 @@ jobs:
         # 새로운 프로세스 시작
         JAR_NAME="${{ env.PROJECT_NAME }}-${{ env.PROJECT_VERSION }}.jar"
         echo "새로운 애플리케이션 배포 시작: ${JAR_NAME}"
-        nohup java -jar $JAR_NAME > nohup.out 2>&1 &
+        nohup java -jar "$DEPLOY_DIR/$JAR_NAME" > nohup.out 2>&1 &
         echo "배포 완료"
         EOF"
 
