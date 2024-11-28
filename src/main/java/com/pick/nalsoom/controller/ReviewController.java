@@ -6,7 +6,6 @@ import com.pick.nalsoom.jwt.UserDetailsImpl;
 import com.pick.nalsoom.utils.NoSuchReviewException;
 import com.pick.nalsoom.utils.NoSuchShelterException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
