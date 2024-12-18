@@ -25,7 +25,7 @@ public class ShelterViewController {
             @RequestParam(name = "searchPaging", defaultValue = "0") int searchPaging,
             @RequestParam(name = "searchSize", defaultValue = "10") int searchSize
     ) {
-
+        System.out.println("컨트롤러까지 들어왔어?");
         //검색 결과
         List<ShelterViewDto> shelterViewDtoList = null;
 
