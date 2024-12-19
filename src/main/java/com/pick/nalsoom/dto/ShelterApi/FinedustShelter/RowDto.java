@@ -12,46 +12,43 @@ import lombok.NoArgsConstructor;
 @Builder
 public class RowDto {
 
-    @JsonProperty("SN")
+    @JsonProperty("SNO")
     private String sn;
 
-    @JsonProperty("HJD_NAM")
-    private String hjdNam;
+    @JsonProperty("DONG_NM")
+    private String dongNm;
 
-    @JsonProperty("SHUNT_NAM")
-    private String shuntNam;
+    @JsonProperty("FCLT_NM")
+    private String fcltNm;
 
-    @JsonProperty("ADR_NAM")
-    private String adrNam;
+    @JsonProperty("ADDR")
+    private String addr;
 
-    @JsonProperty("EQUP_TYPE")
-    private String equpType;
+    @JsonProperty("FCLT_TYPE")
+    private String fcltType;
 
-    @JsonProperty("HOU_CNT_M")
-    private String houCntM;
+    @JsonProperty("UTZTN_PSBLTY_NOPE")
+    private String utztnPsbltyNope;
 
-    @JsonProperty("TEL_NO_CN")
-    private String telNoCn;
+    @JsonProperty("WD_UTZTN_HRM")
+    private String wdUtztnHrm;
 
-    @JsonProperty("WKDY_USE_HR")
-    private String wkdyUseHr;
+    @JsonProperty("WE_UTZTN_HRM")
+    private String weUtztnHrm;
 
-    @JsonProperty("WKND_USE_HR")
-    private String wkndUseHr;
+    @JsonProperty("MBSH_YN")
+    private String mbshYn;
 
-    @JsonProperty("MEMBERSHIP_YN")
-    private String membershipYn;
+    @JsonProperty("XCRD")
+    private String xcrd;
 
-    @JsonProperty("MAP_COORD_X")
-    private String mapCoordX;
-
-    @JsonProperty("MAP_COORD_Y")
-    private String mapCoordY;
+    @JsonProperty("YCRD")
+    private String ycrd;
 
     @JsonProperty("AREA")
     private String area;
 
-    @JsonProperty("REMARK")
-    private String remark;
+    @JsonProperty("RMRK")
+    private String rmrk;
 
 }
