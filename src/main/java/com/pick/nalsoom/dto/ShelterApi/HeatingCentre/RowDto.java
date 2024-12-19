@@ -12,17 +12,11 @@ import lombok.NoArgsConstructor;
 @Builder
 public class RowDto {
 
-    @JsonProperty("SN")
-    private String sn;
+    @JsonProperty("SNO")
+    private String sno;
 
-    @JsonProperty("R_AREA_NM")
-    private String rAreaNm;
-
-    @JsonProperty("USE_YN")
-    private String useYn;
-
-    @JsonProperty("COLCNT_PUBLIC_USE_YN")
-    private String colcntPublicUseYn;
+    @JsonProperty("RESTAREA_NM")
+    private String restareaNm;
 
     @JsonProperty("ROAD_NM_ADDR")
     private String roadNmAddr;
@@ -30,14 +24,14 @@ public class RowDto {
     @JsonProperty("LOTNO_ADDR")
     private String lotnoAddr;
 
-    @JsonProperty("EQUP_TYPE")
-    private String equpType;
+    @JsonProperty("FCLT_TYPE")
+    private String fcltType;
 
-    @JsonProperty("R_AREA_SQR")
-    private String rAreaSqr;
+    @JsonProperty("FCAR")
+    private String fcar;
 
-    @JsonProperty("USE_PRNB")
-    private String usePrnb;
+    @JsonProperty("UTZTN_PSBLTY_NOPE")
+    private String utztnPsbltyNope;
 
     @JsonProperty("OPER_BGNG_YMD")
     private String operBgngYmd;
@@ -45,89 +39,41 @@ public class RowDto {
     @JsonProperty("OPER_END_YMD")
     private String operEndYmd;
 
-    @JsonProperty("WKDY_OPN_YN")
-    private String wkdyOpnYn;
+    @JsonProperty("WD_OPN_YN")
+    private String wdOpnYn;
 
-    @JsonProperty("WKDY_END_HR")
-    private String wkdyEndHr;
+    @JsonProperty("WD_OPN_HRM")
+    private String wdOpnHrm;
 
-    @JsonProperty("SATDAY_OPN_YN")
-    private String satdayOpnYn;
+    @JsonProperty("WD_END_HRM")
+    private String wdEndHrm;
 
-    @JsonProperty("SATDAY_BGNG_HR")
-    private String satdayBgngHr;
+    @JsonProperty("SAT_OPN_YN")
+    private String satOpnYn;
 
-    @JsonProperty("SATDAY_END_HR")
-    private String satdayEndHr;
+    @JsonProperty("SAT_OPN_HRM")
+    private String satOpnHrm;
 
-    @JsonProperty("SUNDAY_OPN_YN")
-    private String sundayOpnYn;
+    @JsonProperty("SAT_END_HRM")
+    private String satEndHrm;
 
-    @JsonProperty("SUNDAY_BGNG_HR")
-    private String sundayBgngHr;
+    @JsonProperty("SUN_OPN_YN")
+    private String sunOpnYn;
 
-    @JsonProperty("SUNDAY_END_HR")
-    private String sundayEndHr;
+    @JsonProperty("SUN_OPN_HRM")
+    private String sunOpnHrm;
 
-    @JsonProperty("HOLDAY_OPN_YN")
-    private String holdayOpnYn;
+    @JsonProperty("SUN_END_HRM")
+    private String sunEndHrm;
 
-    @JsonProperty("HOLDAY_BGNG_HR")
-    private String holDayBgngHr;
+    @JsonProperty("LHLDY_OPN_YN")
+    private String lhldyOpnYn;
 
-    @JsonProperty("HOLDAY_END_HR")
-    private String holdayEndHr;
+    @JsonProperty("LHLDY_OPN_HRM")
+    private String lhldyOpnHrm;
 
-    @JsonProperty("HEAT1_CNT")
-    private String heat1Cnt;
-
-    @JsonProperty("HEAT2_CNT")
-    private String heat2Cnt;
-
-    @JsonProperty("HEAT3_CNT")
-    private String heat3Cnt;
-
-    @JsonProperty("HEAT4_CNT")
-    private String heat4Cnt;
-
-    @JsonProperty("CHK1_YN")
-    private String chk1Yn;
-
-    @JsonProperty("CHK2_YN")
-    private String chk2Yn;
-
-    @JsonProperty("CHK3_YN")
-    private String chk3Yn;
-
-    @JsonProperty("CHK4_YN")
-    private String chk4Yn;
-
-    @JsonProperty("CHK5_YN")
-    private String chk5Yn;
-
-    @JsonProperty("CHK6_YN")
-    private String chk6Yn;
-
-    @JsonProperty("CHK7_YN")
-    private String chk7Yn;
-
-    @JsonProperty("MNG_DEPT")
-    private String mngDept;
-
-    @JsonProperty("MNG_TEL")
-    private String mngTel;
-
-    @JsonProperty("D_MNMT_NM")
-    private String dMnmtNm;
-
-    @JsonProperty("D_MNMT_TEL")
-    private String dMnmtTel;
-
-    @JsonProperty("S_MNMT_NM")
-    private String sMnmtNm;
-
-    @JsonProperty("S_MNMT_TEL")
-    private String sMnmtTel;
+    @JsonProperty("LHLDY_END_HRM")
+    private String lhldyEndHrm;
 
     @JsonProperty("LAT")
     private String lat;
@@ -138,21 +84,13 @@ public class RowDto {
     @JsonProperty("RMRK")
     private String rmrk;
 
-    @JsonProperty("R_SEQ_NO")
-    private String rSeqNo;
+    @JsonProperty("XCRD")
+    private String xcrd;
 
-    @JsonProperty("YEAR")
-    private String year;
+    @JsonProperty("YCRD")
+    private String ycrd;
 
-    @JsonProperty("AREA_CD")
-    private String areaCd;
+    @JsonProperty("NGHT_OPN")
+    private String nghtOpn;
 
-    @JsonProperty("MAP_COORD_X")
-    private String mapCoordX;
-
-    @JsonProperty("MAP_COORD_Y")
-    private String mapCoordY;
-
-    @JsonProperty("CHK8_YN")
-    private String chk8Yn;
 }

@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 public class RowDto {
 
     @JsonProperty("SNO")
-    private String sn;
+    private String sno;
 
     @JsonProperty("DONG_NM")
     private String dongNm;
