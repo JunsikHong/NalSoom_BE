@@ -56,11 +56,12 @@ public class ShelterService {
             shelterList.add(new Shelter().builder().shelterSn(row.getRestareaNm()).shelterType("TbGtnHwcwP").build());
         }
 
+        int idx = 0;
         for (com.pick.nalsoom.dto.ShelterApi.HeatingCentre.RowDto row : heatingCentreData) {
-            shelterList.add(new Shelter().builder().shelterSn(row.getSno()).shelterType("TbGtnCwP").build());
+            idx = row.getSno().indexOf(".");
+            shelterList.add(new Shelter().builder().shelterSn(row.getSno().substring(0,idx)).shelterType("TbGtnCwP").build());
         }
 
-        int idx = 0;
         for (com.pick.nalsoom.dto.ShelterApi.FinedustShelter.RowDto row : fineDustShelterData) {
             idx = row.getSno().indexOf(".");
             shelterList.add(new Shelter().builder().shelterSn(row.getSno().substring(0,idx)).shelterType("shuntPlace").build());
