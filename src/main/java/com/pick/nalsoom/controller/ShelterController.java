@@ -13,8 +13,8 @@ public class ShelterController {
 
     private final ShelterService shelterService;
 
-    @GetMapping
-    public void updateShelter() {
-        shelterService.updateSheltersData();
-    }
+//    @GetMapping
+//    public void updateShelter() {
+//        shelterService.updateSheltersData();
+//    }
 }
