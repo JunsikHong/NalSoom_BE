@@ -53,17 +53,17 @@ public class ShelterService {
 
         //response dto -> shelter domain list
         for (com.pick.nalsoom.dto.ShelterApi.CoolingCentre.RowDto row : coolingCentreData) {
-            shelterList.add(new Shelter().builder().shelterSn(row.getRSeqNo()).shelterType("TbGtnHwcwP").build());
+            shelterList.add(new Shelter().builder().shelterSn(row.getRestareaNm()).shelterType("TbGtnHwcwP").build());
         }
 
         for (com.pick.nalsoom.dto.ShelterApi.HeatingCentre.RowDto row : heatingCentreData) {
-            shelterList.add(new Shelter().builder().shelterSn(row.getRSeqNo()).shelterType("TbGtnCwP").build());
+            shelterList.add(new Shelter().builder().shelterSn(row.getSno()).shelterType("TbGtnCwP").build());
         }
 
         int idx = 0;
         for (com.pick.nalsoom.dto.ShelterApi.FinedustShelter.RowDto row : fineDustShelterData) {
-            idx = row.getSn().indexOf(".");
-            shelterList.add(new Shelter().builder().shelterSn(row.getSn().substring(0,idx)).shelterType("shuntPlace").build());
+            idx = row.getSno().indexOf(".");
+            shelterList.add(new Shelter().builder().shelterSn(row.getSno().substring(0,idx)).shelterType("shuntPlace").build());
         }
 
         shelterRepository.deleteAll();

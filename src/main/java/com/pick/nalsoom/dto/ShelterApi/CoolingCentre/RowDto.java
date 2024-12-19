@@ -12,76 +12,49 @@ import lombok.NoArgsConstructor;
 @Builder
 public class RowDto {
 
-    @JsonProperty("R_SEQ_NO")
-    private String rSeqNo;
+    @JsonProperty("YR")
+    private String yr;
 
-    @JsonProperty("YEAR")
-    private String year;
+    @JsonProperty("RGN_CD")
+    private String rgnCd;
 
-    @JsonProperty("AREA_CD")
-    private String areaCd;
+    @JsonProperty("FCLT_TYPE")
+    private String fcltType;
 
-    @JsonProperty("EQUP_TYPE")
-    private String equpType;
+    @JsonProperty("RESTAREA_NM")
+    private String restareaNm;
 
-    @JsonProperty("R_AREA_NM")
-    private String rAreaNm;
+    @JsonProperty("ROAD_NM_ADDR")
+    private String roadNmAddr;
 
-    @JsonProperty("R_DETL_ADD")
-    private String rDetlAdd;
+    @JsonProperty("LOTNO_DADDR")
+    private String lotnoDaddr;
 
-    @JsonProperty("J_DETL_ADD")
-    private String jDetlAdd;
+    @JsonProperty("AREA")
+    private String area;
 
-    @JsonProperty("R_AREA_SQR")
-    private String rAreaSqr;
-
-    @JsonProperty("USE_PRNB")
-    private String usePrnb;
-
-    @JsonProperty("CLER1_CNT")
-    private String cler1Cnt;
-
-    @JsonProperty("CLER2_CNT")
-    private String cler2Cnt;
-
-    @JsonProperty("CHK1_YN")
-    private String chk1Yn;
-
-    @JsonProperty("CHK2_YN")
-    private String chk2Yn;
-
-    @JsonProperty("CHK3_YN")
-    private String chk3Yn;
-
-    @JsonProperty("CRE_DTTM")
-    private String creDttm;
-
-    @JsonProperty("UPDT_DTTM")
-    private String updtDttm;
-
-    @JsonProperty("USE_YN")
-    private String useYn;
+    @JsonProperty("UTZTN_PSBLTY_NOPE")
+    private String utztnPsbltyNope;
 
     @JsonProperty("RMRK")
     private String rmrk;
 
-    @JsonProperty("DT_START")
-    private String dtStart;
+    @JsonProperty("OPER_BGNG_YMD")
+    private String operBgngYmd;
 
-    @JsonProperty("DT_END")
-    private String dtEnd;
+    @JsonProperty("OPER_END_YMD")
+    private String operEndYmd;
 
-    @JsonProperty("LO")
-    private String lo;
+    @JsonProperty("LOT")
+    private String lot;
 
-    @JsonProperty("LA")
-    private String la;
+    @JsonProperty("LAT")
+    private String lat;
 
-    @JsonProperty("XX")
-    private String xx;
+    @JsonProperty("XCRD")
+    private String xcrd;
 
-    @JsonProperty("YY")
-    private String yy;
+    @JsonProperty("YCRD")
+    private String ycrd;
 
 }
